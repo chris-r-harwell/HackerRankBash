@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# INPUT: two lines
+# int, number of ints in next line
+# list of ints.
+#
+# OUTPUT: int that occurs only once
+#
+
+set -e
+set -u
+set -o pipefail
+#DEBUG set -x
+
+declare -a intlist
+
+read -r num
+#DEBUG echo $num
+
+read -r -a intlist || [ -n "$intlist" ]
+#DEBUG echo ${intlist[@]}
+#DEBUG n=${#intlist[@]}
+
+
+count_elements_in_array(){
+    # input: item .. array as positional arguments
+    # output: number of times element occurs
+    declare -i occurs=0
+    elem=$1
+    for item in "${@:2}" ; do
+        if [[ $item = $elem ]] ; then
+            occurs=$occurs+1
+        fi
+    done
+
+    return $occurs
+}
+
+
+for item in ${intlist[@]}; do
+    set +e
+    count_elements_in_array $item ${intlist[@]}
+    m=$?
+    set -e
+    #DEBUG echo $m
+    if [[ $m = 1 ]] ; then
+        echo $item
+    fi
+done
